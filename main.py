@@ -118,4 +118,7 @@ def norag_chat():
         manager,
         message=PROBLEM,
     )
-
+
+
+print("RAG CHAT")
+rag_chat()
