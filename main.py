@@ -7,6 +7,14 @@ import autogen
 from autogen import AssistantAgent
 from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent
 
+# Phoenix
+os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "http://localhost:6006"
+os.environ["PHOENIX_PROJECT_NAME"] = "testing-autogen-rag"
+from phoenix.trace.openai.instrumentor import OpenAIInstrumentor
+from phoenix.trace.openai import OpenAIInstrumentor
+import phoenix as px
+px.launch_app()
+OpenAIInstrumentor().instrument()
 
 config_list = autogen.config_list_from_json(
   "OAI_CONFIG_LIST.json",
