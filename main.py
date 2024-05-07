@@ -75,3 +75,47 @@ reviewer = autogen.AssistantAgent(
     llm_config=llm_config,
     description="Code Reviewer who can review the code.",
 )
+
+PROBLEM = "What are the headers of UDP package, and how to send an UDP package with python."
+
+def _reset_agents():
+    boss.reset()
+    boss_aid.reset()
+    coder.reset()
+    pm.reset()
+    reviewer.reset()
+
+
+def rag_chat():
+    _reset_agents()
+    groupchat = autogen.GroupChat(
+        agents=[boss_aid, pm, coder, reviewer], messages=[], max_round=12, speaker_selection_method="round_robin"
+    )
+    manager = autogen.GroupChatManager(groupchat=groupchat, llm_config=llm_config)
+
+    # Start chatting with boss_aid as this is the user proxy agent.
+    boss_aid.initiate_chat(
+        manager,
+        message=boss_aid.message_generator,
+        problem=PROBLEM,
+        n_results=3,
+    )
+
+
+def norag_chat():
+    _reset_agents()
+    groupchat = autogen.GroupChat(
+        agents=[boss, pm, coder, reviewer],
+        messages=[],
+        max_round=12,
+        speaker_selection_method="auto",
+        allow_repeat_speaker=False,
+    )
+    manager = autogen.GroupChatManager(groupchat=groupchat, llm_config=llm_config)
+
+    # Start chatting with the boss as this is the user proxy agent.
+    boss.initiate_chat(
+        manager,
+        message=PROBLEM,
+    )
+
